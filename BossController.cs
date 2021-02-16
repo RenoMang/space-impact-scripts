@@ -20,6 +20,8 @@ public class BossController : MonoBehaviour
     private Material defaultMaterial;
     public Material flashMaterial;
 
+    private PlayerAgent agent;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -28,6 +30,8 @@ public class BossController : MonoBehaviour
         meshRenderer = GetComponent<SkinnedMeshRenderer>();
 
         defaultMaterial = meshRenderer.material;
+        agent = FindObjectOfType<PlayerController>().GetComponent<PlayerAgent>();
+
     }
 
     private void OnTriggerEnter(Collider other)
@@ -43,16 +47,17 @@ public class BossController : MonoBehaviour
         {
             return;
         }
-        
-        if (damageDealer.CompareTag("EnemyShot") )
+
+        if (damageDealer.CompareTag("EnemyShot"))
         {
             return;
         }
 
         meshRenderer.material = flashMaterial;
-        
+
         gameController.AddToScore(scoreValue);
         health -= damageDealer.GetDamage();
+        agent.AddReward(0.1f);
         damageDealer.Hit();
         if (health <= 0)
         {
@@ -73,9 +78,11 @@ public class BossController : MonoBehaviour
     private void Die()
     {
         Debug.Log("Enemy has died");
-        FindObjectOfType<LevelController>().LoadWinGame();
-        Destroy(gameObject);
-        Instantiate(explosion, transform.position, transform.rotation);
+        //FindObjectOfType<LevelController>().LoadWinGame();
+        agent.SetReward(1.0f);
+        agent.EndEpisode();
+        //Destroy(gameObject);
+        //Instantiate(explosion, transform.position, transform.rotation);
     }
 
 

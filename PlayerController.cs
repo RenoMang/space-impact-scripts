@@ -37,9 +37,9 @@ public class PlayerController : MonoBehaviour
     public GameObject shot;
     public Transform shotSpawn;
     public float fireRate;
-    private float nextFire;
+    public float nextFire;
 
-    private bool isDealTrigger;
+    public bool isDealTrigger;
     private PlayerAgent agent;
 
 
@@ -101,6 +101,7 @@ public class PlayerController : MonoBehaviour
 
         health -= damageDealer.GetDamage();
         healthDisplay.TakeDamage(1); // Subtracts one heart from the heartdisplay script
+        agent.AddReward(-0.2f);
         damageDealer.Hit();
         if (health <= 0)
         {
@@ -123,6 +124,7 @@ public class PlayerController : MonoBehaviour
         Debug.Log("Player has died");
         //FindObjectOfType<LevelController>().LoadGameOver(); // when player dies, the game over screen is loaded
         //Destroy(gameObject);
+        agent.SetReward(-1f);
         agent.EndEpisode();
     }
 

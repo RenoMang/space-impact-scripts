@@ -14,12 +14,14 @@ public class ShipController : MonoBehaviour
 
     [Header("Enemy VFX")]
     public GameObject explosion;
+    private PlayerAgent agent;
 
     // Start is called before the first frame update
     void Start()
     {
         gameController = FindObjectOfType<GameController>();
         rigidBody = GetComponent<Rigidbody>();
+        agent = FindObjectOfType<PlayerController>().GetComponent<PlayerAgent>();
         // rigidBody.velocity = transform.forward * speed;
     }
 
@@ -36,12 +38,12 @@ public class ShipController : MonoBehaviour
         {
             return;
         }
-        
-        if (damageDealer.CompareTag("EnemyShot") )
+
+        if (damageDealer.CompareTag("EnemyShot"))
         {
             return;
         }
-        
+
         health -= damageDealer.GetDamage();
         damageDealer.Hit();
         if (health <= 0)
@@ -54,6 +56,7 @@ public class ShipController : MonoBehaviour
     private void Die()
     {
         Debug.Log("Enemy has died");
+        agent.AddReward(0.1f);
         Destroy(gameObject);
         Instantiate(explosion, transform.position, transform.rotation);
     }
