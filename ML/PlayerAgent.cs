@@ -62,7 +62,7 @@ public class PlayerAgent : Agent
     {
         float moveHorizontal = actionBuffers.ContinuousActions[0];
         float moveVertical = actionBuffers.ContinuousActions[1];
-        int fire = actionBuffers.DiscreteActions[1];
+        int fire = actionBuffers.DiscreteActions[0];
 
         Vector3 movement = new Vector3(moveHorizontal, 0.0f, moveVertical);
         rigidBody.velocity = movement * _playerController.speed;
@@ -81,5 +81,16 @@ public class PlayerAgent : Agent
         }
     }
 
+    public override void Heuristic(in ActionBuffers actionsOut)
+    {
+        var continuousActionsOut = actionsOut.ContinuousActions;
+        continuousActionsOut[0] = Input.GetAxis("Horizontal");
+        continuousActionsOut[1] = Input.GetAxis("Vertical");
 
+        var discreteActionsOut = actionsOut.DiscreteActions;
+        if (Input.GetButton("Fire1"))
+        {
+            discreteActionsOut[0] = 1;
+        }
+    }
 }
