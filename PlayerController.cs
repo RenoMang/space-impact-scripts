@@ -120,12 +120,14 @@ public class PlayerController : MonoBehaviour
 
     private void Die()
     {
-        Instantiate(playerExplosion, transform.position, transform.rotation);
-        Debug.Log("Player has died");
+        //Instantiate(playerExplosion, transform.position, transform.rotation);
+        //Debug.Log("Player has died");
         //FindObjectOfType<LevelController>().LoadGameOver(); // when player dies, the game over screen is loaded
         //Destroy(gameObject);
         agent.SetReward(-1f);
         agent.EndEpisode();
+
+        Debug.Log("end this episode");
     }
 
     private void Fire()

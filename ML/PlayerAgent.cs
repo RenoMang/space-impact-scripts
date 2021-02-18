@@ -20,17 +20,17 @@ public class PlayerAgent : Agent
 
     void Start()
     {
+
+    }
+
+    public override void Initialize()
+    {
         _playerController = GetComponent<PlayerController>();
         background = GameObject.Find("Background");
         backgroundTransform = background.transform;
         newEnemySpawner = GameObject.Find("EnemySpawner").GetComponent<NewEnemySpawner>();
         healthDisplay = FindObjectOfType<HealthDisplay>();
         rigidBody = GetComponent<Rigidbody>();
-    }
-
-    public override void Initialize()
-    {
-
     }
 
     public override void OnEpisodeBegin()
@@ -49,6 +49,8 @@ public class PlayerAgent : Agent
         //reset the enemy
         newEnemySpawner.ResetEnemies();
 
+        Debug.Log("Start new episode");
+
     }
 
     public override void CollectObservations(VectorSensor sensor)
@@ -63,6 +65,7 @@ public class PlayerAgent : Agent
         float moveHorizontal = actionBuffers.ContinuousActions[0];
         float moveVertical = actionBuffers.ContinuousActions[1];
         int fire = actionBuffers.DiscreteActions[0];
+        Debug.Log((moveHorizontal, moveVertical, fire));
 
         Vector3 movement = new Vector3(moveHorizontal, 0.0f, moveVertical);
         rigidBody.velocity = movement * _playerController.speed;
