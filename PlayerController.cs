@@ -126,8 +126,6 @@ public class PlayerController : MonoBehaviour
         //Destroy(gameObject);
         agent.SetReward(-1f);
         agent.EndEpisode();
-
-        Debug.Log("end this episode");
     }
 
     private void Fire()

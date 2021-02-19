@@ -11,7 +11,7 @@ public class BoltCollisionHandler : MonoBehaviour
         if (!damageDealer) { return; }
         if (damageDealer.CompareTag("EnemyShot"))
         {
-            Debug.Log("Bolts collided");
+            //Debug.Log("Bolts collided");
             damageDealer.Hit();
             Destroy(gameObject);
         }

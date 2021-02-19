@@ -16,6 +16,7 @@ public class PlayerAgent : Agent
     private Transform backgroundTransform;
     private HealthDisplay healthDisplay;
     private Rigidbody rigidBody;
+    public float space;
 
 
     void Start()
@@ -27,7 +28,7 @@ public class PlayerAgent : Agent
     {
         _playerController = GetComponent<PlayerController>();
         background = GameObject.Find("Background");
-        backgroundTransform = background.transform;
+        //backgroundTransform = background.transform;
         newEnemySpawner = GameObject.Find("EnemySpawner").GetComponent<NewEnemySpawner>();
         healthDisplay = FindObjectOfType<HealthDisplay>();
         rigidBody = GetComponent<Rigidbody>();
@@ -36,9 +37,9 @@ public class PlayerAgent : Agent
     public override void OnEpisodeBegin()
     {
         //reset the background
-        background.transform.position = backgroundTransform.position;
-        background.transform.rotation = backgroundTransform.rotation;
-        background.transform.localScale = backgroundTransform.localScale;
+        //background.transform.position = backgroundTransform.position;
+        //background.transform.rotation = backgroundTransform.rotation;
+        //background.transform.localScale = backgroundTransform.localScale;
 
         //reset the player
         transform.position = new Vector3(0.0f, 0.0f, 0.0f);
@@ -48,26 +49,30 @@ public class PlayerAgent : Agent
 
         //reset the enemy
         newEnemySpawner.ResetEnemies();
-
-        Debug.Log("Start new episode");
-
+        Debug.Log("Start");
     }
 
     public override void CollectObservations(VectorSensor sensor)
     {
         // Observe the agent's local rotation (3 observations)
+        Debug.Log(transform.position.normalized);
+        Debug.Log(_playerController.isDealTrigger ? 1 : 0);
         sensor.AddObservation(transform.position.normalized);
         sensor.AddObservation(_playerController.isDealTrigger ? 1 : 0);
     }
 
     public override void OnActionReceived(ActionBuffers actionBuffers)
     {
-        float moveHorizontal = actionBuffers.ContinuousActions[0];
-        float moveVertical = actionBuffers.ContinuousActions[1];
+        Debug.Log(actionBuffers);
+        int moveHorizontal = actionBuffers.DiscreteActions[1];
+        int moveVertical = actionBuffers.DiscreteActions[2];
         int fire = actionBuffers.DiscreteActions[0];
         Debug.Log((moveHorizontal, moveVertical, fire));
-
-        Vector3 movement = new Vector3(moveHorizontal, 0.0f, moveVertical);
+        Vector3 movement = new Vector3(0, 0, 0);
+        if (moveHorizontal == 1 || moveVertical == 1)
+        {
+            movement = new Vector3(moveHorizontal * space, 0.0f, moveVertical * space);
+        }
         rigidBody.velocity = movement * _playerController.speed;
         rigidBody.position = new Vector3
         (
@@ -86,14 +91,23 @@ public class PlayerAgent : Agent
 
     public override void Heuristic(in ActionBuffers actionsOut)
     {
-        var continuousActionsOut = actionsOut.ContinuousActions;
+        Debug.Log(actionsOut);
+        /*var continuousActionsOut = actionsOut.ContinuousActions;
         continuousActionsOut[0] = Input.GetAxis("Horizontal");
-        continuousActionsOut[1] = Input.GetAxis("Vertical");
+        continuousActionsOut[1] = Input.GetAxis("Vertical");*/
 
         var discreteActionsOut = actionsOut.DiscreteActions;
         if (Input.GetButton("Fire1"))
         {
             discreteActionsOut[0] = 1;
+        }
+        if (Input.GetButton("Horizontal"))
+        {
+            discreteActionsOut[1] = 1;
+        }
+        if (Input.GetButton("Vertical"))
+        {
+            discreteActionsOut[2] = 1;
         }
     }
 }

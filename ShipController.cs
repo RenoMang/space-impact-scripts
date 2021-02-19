@@ -55,7 +55,7 @@ public class ShipController : MonoBehaviour
 
     private void Die()
     {
-        Debug.Log("Enemy has died");
+        //Debug.Log("Enemy has died");
         agent.AddReward(0.1f);
         Destroy(gameObject);
         Instantiate(explosion, transform.position, transform.rotation);
