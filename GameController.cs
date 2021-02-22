@@ -12,20 +12,20 @@ public class GameController : MonoBehaviour
     public float spawnWait;
     public float startWait;
     public float waveWait;
-    
+
     private int score = 0;
 
     void Start()
     {
         StartCoroutine(SpawnWaves());
     }
-    
+
     IEnumerator SpawnWaves()
     {
         yield return new WaitForSeconds(startWait);
         while (true)
         {
-            for (int i = 0; i < hazardCount; i ++)
+            for (int i = 0; i < hazardCount; i++)
             {
                 Vector3 spawnPosition = new Vector3(spawnValues.x, spawnValues.y, Random.Range(-spawnValues.z, spawnValues.z));
                 Quaternion spawnRotation = Quaternion.identity;
@@ -45,5 +45,10 @@ public class GameController : MonoBehaviour
     public void AddToScore(int scoreValue)
     {
         score += scoreValue;
+    }
+
+    public void ResetScore()
+    {
+        score = 0;
     }
 }

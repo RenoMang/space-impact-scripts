@@ -57,7 +57,7 @@ public class BossController : MonoBehaviour
 
         gameController.AddToScore(scoreValue);
         health -= damageDealer.GetDamage();
-        agent.AddReward(0.1f);
+        agent.AddReward(0.01f);
         damageDealer.Hit();
         if (health <= 0)
         {
@@ -81,7 +81,7 @@ public class BossController : MonoBehaviour
         //FindObjectOfType<LevelController>().LoadWinGame();
         agent.SetReward(1.0f);
         agent.EndEpisode();
-        //Destroy(gameObject);
+        Destroy(gameObject);
         //Instantiate(explosion, transform.position, transform.rotation);
     }
 

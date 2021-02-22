@@ -16,6 +16,7 @@ public class PlayerAgent : Agent
     private Transform backgroundTransform;
     private HealthDisplay healthDisplay;
     private Rigidbody rigidBody;
+    private GameController gameController;
     public float space;
 
 
@@ -28,24 +29,26 @@ public class PlayerAgent : Agent
     {
         _playerController = GetComponent<PlayerController>();
         background = GameObject.Find("Background");
-        //backgroundTransform = background.transform;
+        backgroundTransform = background.transform;
         newEnemySpawner = GameObject.Find("EnemySpawner").GetComponent<NewEnemySpawner>();
         healthDisplay = FindObjectOfType<HealthDisplay>();
+        gameController = FindObjectOfType<GameController>();
         rigidBody = GetComponent<Rigidbody>();
     }
 
     public override void OnEpisodeBegin()
     {
         //reset the background
-        //background.transform.position = backgroundTransform.position;
-        //background.transform.rotation = backgroundTransform.rotation;
-        //background.transform.localScale = backgroundTransform.localScale;
+        background.transform.position = backgroundTransform.position;
+        background.transform.rotation = backgroundTransform.rotation;
+        background.transform.localScale = backgroundTransform.localScale;
 
         //reset the player
         transform.position = new Vector3(0.0f, 0.0f, 0.0f);
         transform.rotation = Quaternion.Euler(0.0f, 90.0f, 0.0f);
         _playerController.health = 3;
-        healthDisplay.life = 3;
+        healthDisplay.ResetHealth();
+        gameController.ResetScore();
 
         //reset the enemy
         newEnemySpawner.ResetEnemies();
@@ -55,25 +58,32 @@ public class PlayerAgent : Agent
     public override void CollectObservations(VectorSensor sensor)
     {
         // Observe the agent's local rotation (3 observations)
-        Debug.Log(transform.position.normalized);
-        Debug.Log(_playerController.isDealTrigger ? 1 : 0);
+        //Debug.Log(transform.position.normalized);
+        //Debug.Log(_playerController.isDealTrigger ? 1 : 0);
         sensor.AddObservation(transform.position.normalized);
         sensor.AddObservation(_playerController.isDealTrigger ? 1 : 0);
     }
 
     public override void OnActionReceived(ActionBuffers actionBuffers)
     {
-        Debug.Log(actionBuffers);
-        int moveHorizontal = actionBuffers.DiscreteActions[1];
-        int moveVertical = actionBuffers.DiscreteActions[2];
-        int fire = actionBuffers.DiscreteActions[0];
-        Debug.Log((moveHorizontal, moveVertical, fire));
-        Vector3 movement = new Vector3(0, 0, 0);
-        if (moveHorizontal == 1 || moveVertical == 1)
-        {
-            movement = new Vector3(moveHorizontal * space, 0.0f, moveVertical * space);
-        }
-        rigidBody.velocity = movement * _playerController.speed;
+        var dirToGo = Vector3.zero;
+
+        var dirToGoSideAction = actionBuffers.DiscreteActions[0];
+        var dirToGoForwardAction = actionBuffers.DiscreteActions[1];
+        var fire = actionBuffers.DiscreteActions[2];
+
+        if (dirToGoForwardAction == 1)
+            dirToGo = -1f * transform.forward;
+        else if (dirToGoForwardAction == 2)
+            dirToGo = 1f * transform.forward;
+
+        if (dirToGoSideAction == 1)
+            dirToGo = -1f * transform.right;
+        else if (dirToGoSideAction == 2)
+            dirToGo = 1f * transform.right;
+
+        rigidBody.velocity = dirToGo * _playerController.speed;
+
         rigidBody.position = new Vector3
         (
             Mathf.Clamp(rigidBody.position.x, _playerController.boundary.xMin, _playerController.boundary.xMax),
@@ -91,23 +101,27 @@ public class PlayerAgent : Agent
 
     public override void Heuristic(in ActionBuffers actionsOut)
     {
-        Debug.Log(actionsOut);
-        /*var continuousActionsOut = actionsOut.ContinuousActions;
-        continuousActionsOut[0] = Input.GetAxis("Horizontal");
-        continuousActionsOut[1] = Input.GetAxis("Vertical");*/
-
         var discreteActionsOut = actionsOut.DiscreteActions;
-        if (Input.GetButton("Fire1"))
+        discreteActionsOut.Clear();
+
+        if (Input.GetKey(KeyCode.W))
         {
             discreteActionsOut[0] = 1;
         }
-        if (Input.GetButton("Horizontal"))
+        if (Input.GetKey(KeyCode.S))
+        {
+            discreteActionsOut[0] = 2;
+        }
+        if (Input.GetKey(KeyCode.A))
         {
             discreteActionsOut[1] = 1;
         }
-        if (Input.GetButton("Vertical"))
+        if (Input.GetKey(KeyCode.D))
         {
-            discreteActionsOut[2] = 1;
+            discreteActionsOut[1] = 2;
         }
+        discreteActionsOut[2] = Input.GetKey(KeyCode.Space) ? 1 : 0;
+
+        Debug.Log((discreteActionsOut[0], discreteActionsOut[1], discreteActionsOut[2]));
     }
 }

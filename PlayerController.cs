@@ -97,7 +97,7 @@ public class PlayerController : MonoBehaviour
         }
 
         damageSound.Play();
-        meshRenderer.material = flashMaterial;
+        //meshRenderer.material = flashMaterial;
 
         health -= damageDealer.GetDamage();
         healthDisplay.TakeDamage(1); // Subtracts one heart from the heartdisplay script
@@ -109,7 +109,7 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
-            Invoke("ResetMaterial", .1f);
+            //Invoke("ResetMaterial", .1f);
         }
     }
 
