@@ -70,6 +70,7 @@ public class PlayerController : MonoBehaviour
         {
             healthDisplay.AddHealth();
             health++;
+            agent.AddReward(0.1f);
             healthSound.Play();
         }
     }

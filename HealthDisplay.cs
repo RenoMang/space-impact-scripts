@@ -28,7 +28,7 @@ public class HealthDisplay : MonoBehaviour
 
     public void AddHealth()
     {
-        if (life != maxHealth)
+        if (curlife != maxHealth)
         {
             curlife++;
             hearts[curlife - 1].gameObject.SetActive(true);

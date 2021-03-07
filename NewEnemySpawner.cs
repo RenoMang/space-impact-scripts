@@ -8,6 +8,9 @@ public class NewEnemySpawner : MonoBehaviour
     public int startingWave = 0;
     public float startWait = 1f;
 
+    private GameObject[] enemies;
+    private GameObject[] enemiesShot;
+
     void Start()
     {
         StartCoroutine(SpawnAllWaves());
@@ -48,6 +51,17 @@ public class NewEnemySpawner : MonoBehaviour
 
     public void ResetEnemies()
     {
+        //destroy all the enemies in the scene
+        enemies = GameObject.FindGameObjectsWithTag("Enemy");
+        enemiesShot = GameObject.FindGameObjectsWithTag("EnemyShot");
+        foreach (GameObject enemy in enemies)
+        {
+            Destroy(enemy);
+        }
+        foreach (GameObject enemyShot in enemiesShot)
+        {
+            Destroy(enemyShot);
+        }
         StopAllCoroutines();
         StartCoroutine(SpawnAllWaves());
     }
